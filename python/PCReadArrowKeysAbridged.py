@@ -8,7 +8,8 @@ This is a temporary script file.
 import cv2
 import numpy as np
 import time
-import serial				# may need to do install?
+import serial				       # may need to do install?
+import serial.tools.list_ports # get open com port
 from msvcrt import getch		# read the keyboard!
 
 # forward: 72
@@ -16,6 +17,27 @@ from msvcrt import getch		# read the keyboard!
 # right: 77
 # left: 75
 
+#opens serial port
+def openSerial():
+    openPorts = serial.tools.list_ports.comports()    
+    print(openPorts)
+    if not openPorts:
+        print("No open ports")
+        exit()
+        
+    ser = serial.Serial(
+        openPorts[0].device,
+        baudrate=9600,
+        parity=serial.PARITY_ODD,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS
+    )
+    if (ser.isOpen()):
+        ser.close()
+    ser.open()
+    return ser
+
+#open video camera
 cap = cv2.VideoCapture(0)
 
 LEFT=chr(64)
@@ -31,30 +53,10 @@ ker3 = np.ones((3,3))/9.0
 ker5 = np.ones((5,5))/25.0
 ker9 = np.ones((9,9))/81.0
 
+ser = openSerial()
 
-
-
-
-
-
-# configure the serial connections (the parameters differs on the device you are connecting to)
-#ser = serial.Serial(
-#	port='COM9',
-#	baudrate=9600,
-#	parity=serial.PARITY_ODD,
-#	stopbits=serial.STOPBITS_ONE,
-#	bytesize=serial.EIGHTBITS
-#)
-#
-#
-#if (ser.isOpen()):
-#	ser.close()
-#
-#
-#ser.open()
-
+#display video, do user inputs
 while 1:
-
     key = 0
     ret, frame = cap.read()
 
@@ -65,9 +67,10 @@ while 1:
     gray81= cv2.filter2D(gray,-1,ker9)
     
     canny = cv2.Canny(gray9, 100,200)
-    canny3 = cv2.Canny(gray9, 50,200)
+    canny3 = cv2.Canny(gray9, 50,200) #works well
     canny5 = cv2.Canny(gray9, 100,250)
     canny9 = cv2.Canny(gray9, 50,250)
+
     # Display the resulting frame
     cv2.imshow('frame',canny)
     cv2.imshow('gray9',canny3)
@@ -85,30 +88,28 @@ while 1:
 
         print key
    
-        if (key==113 or key==81):
+        if (key==113 or key==81): #user quits
            break 
         elif (key>2000):
-           print "arrow key" #arrow key, get another char
-           if (key == 2490368):
+           print "arrow key"      #arrow key, send correct signal
+           if (key == 2490368):   #forward
                key = 72
-           elif (key == 2621440):
+           elif (key == 2621440): #back
                key = 80
-           elif (key == 2424832):
+           elif (key == 2424832): #left
                key = 75
-           elif (key == 2555904):
+           elif (key == 2555904): #right
                key = 77
-    
            ser.write(chr(key))
-            # key=ord(getch())
         else:
            continue
+        
         print key
         
- 
-	
 ser.close()
 print "all done"
 	
 
+    
 
 
