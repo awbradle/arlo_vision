@@ -19,12 +19,12 @@ from msvcrt import getch		# read the keyboard!
 
 #opens serial port
 def openSerial():
-    openPorts = serial.tools.list_ports.comports()    
+    openPorts = serial.tools.list_ports.comports()
     print(openPorts)
     if not openPorts:
         print("No open ports")
         exit()
-        
+
     ser = serial.Serial(
         openPorts[0].device,
         baudrate=9600,
@@ -39,6 +39,10 @@ def openSerial():
 
 #open video camera
 cap = cv2.VideoCapture(0)
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+out = cv2.VideoWriter('output.avi',-1, 20, (frame_width,frame_height),False)
+
 
 LEFT=chr(64)
 RIGHT=chr(32)
@@ -63,33 +67,37 @@ while 1:
     # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray9 = cv2.filter2D(gray,-1,ker3)
-    gray25 = cv2.filter2D(gray,-1,ker5)
-    gray81= cv2.filter2D(gray,-1,ker9)
-    
+    #gray25 = cv2.filter2D(gray,-1,ker5)
+    #gray81= cv2.filter2D(gray,-1,ker9)
+
     canny = cv2.Canny(gray9, 100,200)
-    canny3 = cv2.Canny(gray9, 50,200) #works well
-    canny5 = cv2.Canny(gray9, 100,250)
-    canny9 = cv2.Canny(gray9, 50,250)
+    #canny3 = cv2.Canny(gray9, 50,200) #works well
+    #canny5 = cv2.Canny(gray9, 100,250)
+    #canny9 = cv2.Canny(gray9, 50,250)
 
     # Display the resulting frame
     cv2.imshow('frame',canny)
-    cv2.imshow('gray9',canny3)
-    cv2.imshow('gray25',canny5)
-    cv2.imshow('gray81',canny9)
+    out.write(canny)
+    #cv2.imshow('gray9',canny3)
+    #cv2.imshow('gray25',canny5)
+    #cv2.imshow('gray81',canny9)
     key = cv2.waitKey(1)
-   
+
     if(key == 112):
-      
+
         filename1 = time.strftime("%Y%m%d-%H%M%S")
         filename2 = "images\\" + filename1 + ".jpg"
         cv2.imwrite(filename2 , frame)
-        
+
     if(key)!= -1:
 
         print key
-   
+
         if (key==113 or key==81): #user quits
-           break 
+           break
+        elif (key==115 or key == 83):
+            key = 83
+            ser.write(chr(key))
         elif (key>2000):
            print "arrow key"      #arrow key, send correct signal
            if (key == 2490368):   #forward
@@ -103,13 +111,9 @@ while 1:
            ser.write(chr(key))
         else:
            continue
-        
+
         print key
-        
+
 ser.close()
+out.release()
 print "all done"
-	
-
-    
-
-
