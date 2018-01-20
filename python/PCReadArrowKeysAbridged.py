@@ -41,7 +41,7 @@ def openSerial():
 cap = cv2.VideoCapture(0)
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
-out = cv2.VideoWriter('output.avi',-1, 20, (frame_width,frame_height),False)
+out = cv2.VideoWriter('output'+time.strftime("%Y%m%d-%H%M%S")+'.avi',-1, 20, (frame_width,frame_height),False)
 
 
 LEFT=chr(64)
@@ -65,22 +65,21 @@ while 1:
     ret, frame = cap.read()
 
     # Our operations on the frame come here
+    #perform conversion to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray9 = cv2.filter2D(gray,-1,ker3)
-    #gray25 = cv2.filter2D(gray,-1,ker5)
-    #gray81= cv2.filter2D(gray,-1,ker9)
 
+    #perform noise reduction
+    gray9 = cv2.filter2D(gray,-1,ker3)
+
+    #apply canny edge detection filter
     canny = cv2.Canny(gray9, 100,200)
     #canny3 = cv2.Canny(gray9, 50,200) #works well
-    #canny5 = cv2.Canny(gray9, 100,250)
-    #canny9 = cv2.Canny(gray9, 50,250)
 
     # Display the resulting frame
     cv2.imshow('frame',canny)
-    out.write(canny)
-    #cv2.imshow('gray9',canny3)
-    #cv2.imshow('gray25',canny5)
-    #cv2.imshow('gray81',canny9)
+    #write the save the grayscale image
+    out.write(gray9)
+
     key = cv2.waitKey(1)
 
     if(key == 112):
