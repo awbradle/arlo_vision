@@ -16,7 +16,7 @@ frame_height = int(cap.get(4))
 # Define the codec and create VideoWriter object.The output is stored in 'output.avi' file.
 # Using DIVX codec, 20fps, 720p, False flag specifies grayscale video 
 # The flag must be set correctly or video will not output correctly
-out = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc(*'DIVX'), 20, (frame_width,frame_height),False)
+out = cv2.VideoWriter('output.avi',1, 20, (frame_width,frame_height),False)
  
 while(True):
   ret, frame = cap.read()                          # Read a frame
