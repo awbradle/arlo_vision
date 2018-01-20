@@ -19,13 +19,13 @@ from msvcrt import getch		# read the keyboard!
 
 #opens serial port
 def openSerial():
-    openPorts = serial.tools.list_ports.comports()    
+    openPorts = serial.tools.list_ports.comports()
     openPorts = serial.tools.list_ports.comports()
     print(openPorts)
     if not openPorts:
         print("No open ports")
         exit()
-        
+
 
     ser = serial.Serial(
         openPorts[0].device,
@@ -43,11 +43,8 @@ def openSerial():
 cap = cv2.VideoCapture(0)
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
-<<<<<<< HEAD
-out = cv2.VideoWriter('output.avi',-1, 20, (frame_width,frame_height),False)
-=======
 out = cv2.VideoWriter('output'+time.strftime("%Y%m%d-%H%M%S")+'.avi',-1, 20, (frame_width,frame_height),False)
->>>>>>> 9a292fb8f6eabf212ed95287e975815e6073278d
+
 
 
 LEFT=chr(64)
@@ -76,22 +73,11 @@ while 1:
 
     #perform noise reduction
     gray9 = cv2.filter2D(gray,-1,ker3)
-<<<<<<< HEAD
-    #gray25 = cv2.filter2D(gray,-1,ker5)
-    #gray81= cv2.filter2D(gray,-1,ker9)
-    
     canny = cv2.Canny(gray9, 100,200)
-    #canny3 = cv2.Canny(gray9, 50,200) #works well
-    #canny5 = cv2.Canny(gray9, 100,250)
-    #canny9 = cv2.Canny(gray9, 50,250)
 
-    # Display the resulting frame
+    #show image, write out
     cv2.imshow('frame',canny)
     out.write(canny)
-    #cv2.imshow('gray9',canny3)
-    #cv2.imshow('gray25',canny5)
-    #cv2.imshow('gray81',canny9)
-=======
 
     #apply canny edge detection filter
     canny = cv2.Canny(gray9, 100,200)
@@ -101,8 +87,6 @@ while 1:
     cv2.imshow('frame',canny)
     #write the save the grayscale image
     out.write(gray9)
-
->>>>>>> 9a292fb8f6eabf212ed95287e975815e6073278d
     key = cv2.waitKey(1)
 
     if(key == 112):
@@ -110,19 +94,12 @@ while 1:
         filename1 = time.strftime("%Y%m%d-%H%M%S")
         filename2 = "images\\" + filename1 + ".jpg"
         cv2.imwrite(filename2 , frame)
-        
+
 
     if(key)!= -1:
-
         print key
-   
-
         if (key==113 or key==81): #user quits
-<<<<<<< HEAD
-           break 
-=======
            break
->>>>>>> 9a292fb8f6eabf212ed95287e975815e6073278d
         elif (key==115 or key == 83):
             key = 83
             ser.write(chr(key))
@@ -139,7 +116,6 @@ while 1:
            ser.write(chr(key))
         else:
            continue
-
         print key
 
 ser.close()
