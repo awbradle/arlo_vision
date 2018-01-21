@@ -10,7 +10,6 @@ import numpy as np
 import time
 import serial				       # may need to do install?
 import serial.tools.list_ports # get open com port
-from msvcrt import getch		# read the keyboard!
 
 # forward: 72
 # down: 80
@@ -43,6 +42,7 @@ def openSerial():
 cap = cv2.VideoCapture(0)
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
+fourcc = cv2.cv.FOURCC(*'DIVX')
 out = cv2.VideoWriter('output'+time.strftime("%Y%m%d-%H%M%S")+'.avi',-1, 20, (frame_width,frame_height),False)
 
 
@@ -75,9 +75,7 @@ while 1:
     gray9 = cv2.filter2D(gray,-1,ker3)
     canny = cv2.Canny(gray9, 100,200)
 
-    #show image, write out
-    cv2.imshow('frame',canny)
-    out.write(canny)
+
 
     #apply canny edge detection filter
     canny = cv2.Canny(gray9, 100,200)
@@ -85,6 +83,7 @@ while 1:
 
     # Display the resulting frame
     cv2.imshow('frame',canny)
+    cv2.imshow('frame2',gray9)
     #write the save the grayscale image
     out.write(gray9)
     key = cv2.waitKey(1)
